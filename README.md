@@ -1,6 +1,6 @@
 # LLM Tokens Analysis
 
-This repository contains research conducted in the CRIS Lab (Prof. Venkat Venkatasubramanian) on how large language models (LLMs) encode and organize semantic meaning. The project explores sentence embeddings, clustering methods, and layer-wise representations, showing that semantic clusters follow power-law scaling across different models, datasets, and tasks.
+This repository contains research conducted in the CRIS Lab (Prof. Venkat Venkatasubramanian) during Spring 2025 on how large language models (LLMs) encode and organize semantic meaning. The project explores sentence embeddings, clustering methods, and layer-wise representations, showing that semantic clusters follow power-law scaling across different models, datasets, and tasks.
 
 ## Research Report
 
