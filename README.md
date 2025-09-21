@@ -51,19 +51,20 @@ LLM_Tokens_Analysis/
 ### 1. Sentence Context Vector Clustering & Log-Log Analysis
 
 **Notebooks:**
-- [`romance_sentence_context_vector_clustering.ipynb`](1_sentence_context_vector_clustering&Log_Log_Analysis/romance_sentence_context_vector_clustering.ipynb) - Analysis on Jane Austen's "Sense and Sensibility" (3000 sentences)
-- [`Wiki_sentence_context_vector_clustering.ipynb`](1_sentence_context_vector_clustering&Log_Log_Analysis/Wiki_sentence_context_vector_clustering.ipynb) - Analysis on Wikipedia articles (3000 sentences)
+- [`romance_sentence_context_vector_clustering.ipynb`](1_sentence_context_vector_clustering&Log_Log_Analysis/romance_sentence_context_vector_clustering.ipynb) - Analysis on Jane Austen's "Sense and Sensibility" from Project Gutenberg (3000 middle sentences)
+- [`Wiki_sentence_context_vector_clustering.ipynb`](1_sentence_context_vector_clustering&Log_Log_Analysis/Wiki_sentence_context_vector_clustering.ipynb) - Analysis on Wikipedia sentences from Kaggle dataset (3000 middle sentences)
 
 **Models Used:**
+- uhhlt/story-emb (StoryEmb model, built on Mistral)
 - sentence-transformers/all-mpnet-base-v2 (768-dim embeddings)
-- sentence-transformers/all-distilroberta-v1 (768-dim embeddings)  
-- dunzhang/stella_en_1.5B_v5 (8192-dim embeddings, "StoryEmb" model)
+- sentence-transformers/all-distilroberta-v1 (768-dim embeddings)
 
 **Methods:**
-- K-means clustering with elbow method for optimal k selection
+- K-means clustering with elbow method for optimal k selection (k range: 5-705)
 - HDBSCAN clustering with UMAP dimensionality reduction
+- Hyperparameter tuning using Optuna for HDBSCAN/UMAP parameters
 - Log-log analysis of cluster size distributions
-- Power-law fitting with linear regression on log-transformed data
+- Power-law fitting with linear regression on log10-transformed data
 
 **Key Analyses:**
 - Sentence count per cluster distribution
@@ -74,19 +75,21 @@ LLM_Tokens_Analysis/
 ### 2. TinyLlama Layer Analysis
 
 **Notebooks:**
-- [`Romance_Book_TinyLlama_layers_analysis.ipynb`](2_TinyLlama_last_vs_middle_layer_analysis/Romance_Book_TinyLlama_layers_analysis.ipynb) - Analysis on "Sense and Sensibility"
-- [`Wiki_TinyLlama_layers_analysis.ipynb`](2_TinyLlama_last_vs_middle_layer_analysis/Wiki_TinyLlama_layers_analysis.ipynb) - Analysis on Wikipedia articles
+- [`Romance_Book_TinyLlama_layers_analysis.ipynb`](2_TinyLlama_last_vs_middle_layer_analysis/Romance_Book_TinyLlama_layers_analysis.ipynb) - Analysis on "Sense and Sensibility" (3000 middle sentences)
+- [`Wiki_TinyLlama_layers_analysis.ipynb`](2_TinyLlama_last_vs_middle_layer_analysis/Wiki_TinyLlama_layers_analysis.ipynb) - Analysis on Wikipedia sentences from Kaggle (3000 middle sentences)
 
 **Model:** TinyLlama/TinyLlama-1.1B-Chat-v1.0
-- 23 total layers analyzed
-- Focus on Layer 0 (first), Layer 15 (2/3rd), Layer 22 (last)
+- Focus on Layer 15 (middle/2/3rd) and Layer 22 (last)
 - 2048-dimensional embeddings per layer
+- Layer-wise comparison between middle and final representations
 
 **Methods:**
 - Cosine similarity grouping with threshold-based clustering
-- DBSCAN clustering
-- K-means clustering with optimal k selection
-- HDBSCAN clustering with hyperparameter tuning via Optuna
+- DBSCAN clustering with cosine distance metric
+- K-means clustering with elbow method for optimal k selection (k ranges: 5-705)
+- HDBSCAN clustering with UMAP dimensionality reduction
+- Hyperparameter tuning using Optuna for HDBSCAN/UMAP parameters
+- Cross-layer parameter optimization (using best parameters from one layer on another)
 
 **Key Analyses:**
 - Layer-wise comparison of clustering patterns
@@ -99,17 +102,20 @@ LLM_Tokens_Analysis/
 - [`Sentences_Father_analysis.ipynb`](3_sentneces_next_token_analysis/Sentences_Father_analysis.ipynb) - Focused analysis on word "father" in "The Brothers Karamazov"
 - [`Sentences_histogram&cluster_next_token_prediction.ipynb`](3_sentneces_next_token_analysis/Sentences_histogram&cluster_next_token_prediction.ipynb) - Broader next-token prediction analysis
 
-**Dataset:** 10,000 sentences from "The Brothers Karamazov" by Fyodor Dostoevsky
+**Dataset:** 10,000 middle sentences from "The Brothers Karamazov" by Fyodor Dostoevsky (Project Gutenberg)
 
 **Models:**
-- TinyLlama/TinyLlama-1.1B-Chat-v1.0 for embeddings
-- Next-token prediction probability analysis
+- sentence-transformers/all-mpnet-base-v2 for sentence embeddings
+- GPT-2 (gpt2) for next-token prediction and hidden states analysis
 
 **Methods:**
-- K-means clustering on sentence embeddings
-- Analysis of predicted next-token probabilities
-- Grouping sentences by specific word occurrences
-- Statistical analysis of token prediction patterns
+- K-means clustering on sentence embeddings (k=142 for father analysis, k=300-800 range for broader analysis)
+- Analysis of predicted next-token probabilities using GPT-2
+- Clustering by predicted next-token IDs (novel clustering approach)
+- Thematic concentration analysis around specific concepts (e.g., "father")
+- Distance analysis (Euclidean distance and cosine similarity to cluster centroids)
+- Log-log analysis of cluster size distributions
+- Statistical binning and histogram analysis of clustering patterns
 
 ### 4. Paragraphs Next Token Analysis
 
@@ -121,17 +127,20 @@ LLM_Tokens_Analysis/
 
 **Models:**
 - GPT-2 (gpt2) for next-token prediction and hidden states
-- NovaSearch/stella_en_400M_v5 for semantic embeddings
+- dunzhang/stella_en_400M_v5 for semantic embeddings
 
 **Methods:**
-- Extraction of final-layer hidden states for last tokens
-- Clustering by predicted next-token IDs
-- K-means clustering with knee-point detection
+- Extraction of final-layer hidden states for last tokens in paragraphs
+- Clustering by predicted next-token IDs (novel clustering approach, 555 unique tokens sampled)
+- K-means clustering with knee-point detection (k ranges: 700-1400, optimal k=1132)
+- MiniBatchKMeans for large-scale clustering
 - Log-log analysis of cluster size distributions
+- Power-law fitting with linear regression on log10-transformed data
+- Statistical analysis of predicted token probabilities
 
 **Datasets:**
-- wikipedia-paragraphs dataset from Hugging Face
-- Romance novel paragraphs (minimum 40 characters)
+- wikipedia-paragraphs dataset from Hugging Face (agentlans/wikipedia-paragraphs)
+- Romance novel paragraphs from Hugging Face (AlekseyKorshuk/romance-books, minimum 40 characters)
 
 ### 5. Ontology Analysis
 
@@ -149,11 +158,17 @@ LLM_Tokens_Analysis/
 - K-means clustering (k=1 for centroids, k=2 for classification)
 - Cosine similarity analysis between concept words and cluster centroids
 - PCA, t-SNE, and 3D UMAP visualizations
-- Layer-wise analysis to find optimal conceptual representation
+- Layer-wise analysis across all TinyLlama layers to find optimal conceptual representation
+- Last-token embedding extraction from each transformer layer
+- Cross-category similarity comparisons (mammal vs bird centroids)
 
 **Key Analyses:**
 - Comparison of embeddings for words "mammal" vs "bird" with their respective category centroids
 - Investigation of which model layers best capture conceptual relationships
+- Semantic clustering validation: concept words align with their respective category clusters
+- Layer-wise cosine similarity tracking to identify optimal conceptual layers
+- Cross-modal visualization using multiple dimensionality reduction techniques
+- Hierarchical semantic structure exploration through embedding space analysis
 
 ### 6. Ontology LLM-Assisted Clustering
 
@@ -163,46 +178,57 @@ LLM_Tokens_Analysis/
 
 **Dataset:** Mammal taxonomy data from mammaldiversity.org
 - 6,801 species with taxonomic hierarchy (species, genus, family, order, subclass)
+- MDD_v2.1_6801species.csv file with comprehensive mammal diversity data
 
 **Models:**
-- OpenAI text-embedding-3-large for embeddings
-- GPT-4.1 for LLM-assisted cluster refinement
+- OpenAI text-embedding-3-large for high-dimensional embeddings
+- GPT-4.1 for LLM-assisted cluster refinement and semantic validation
 
 **Methods:**
-- Hierarchical clustering with Ward linkage
-- K-means clustering (k=167, matching number of families)
-- SPEC (Super-point Enhanced Clustering) - edge point refinement
-- LACR (LLM-Assisted Cluster Refinement) - GPT-4.1 based reassignment
-- Dimensionality reduction with PCA (100 components)
+- Hierarchical clustering with Ward linkage (hierarchical approach)
+- K-means clustering (k=167, matching number of families in K-means approach)
+- SPEC (Super-point Enhanced Clustering) - 10% edge point refinement (α=0.10)
+- LACR (LLM-Assisted Cluster Refinement) - GPT-4.1 based reassignment (β=0.10)
+- Dimensionality reduction with PCA (100 components for hierarchical approach)
+- Iterative refinement: 5 SPEC iterations, 3 LACR iterations
+- Cosine similarity-based cluster candidate selection (top-8 nearest clusters)
 
 **Key Analyses:**
-- Taxonomic purity metrics at different hierarchical levels
-- Mean cluster purity by Order, Family, and Genus
-- Ontology construction and visualization
-- Export to OWL format for knowledge representation
+- Taxonomic purity metrics at different hierarchical levels (Order, Family, Genus)
+- Mean cluster purity calculations with silhouette score evaluation
+- Comprehensive ontology construction with hierarchical visualization
+- Export to multiple formats: OWL, JSON, GraphML, CSV for knowledge representation
+- Dendrogram visualization and radial tree representations
+- UMAP visualization colored by taxonomic orders and families
 
 ### 7. Density Analysis
 
 **Notebook:** [`Density_analysis.ipynb`](7.Density%20analysis/Density_analysis.ipynb)
 
-**Dataset:** 3,000 sentences from "Sense and Sensibility" (middle portion)
+**Dataset:** 3,000 middle sentences from "Sense and Sensibility" (Project Gutenberg)
+- Extracted from middle portion of the novel (±1500 sentences from center)
+- Preprocessed with Gutenberg boilerplate removal and text normalization
 
 **Models:**
-- BERT-base-cased (12 layers, 768-dim)
-- Gemma-2B (2,048-dim)
-- Gemma-7B (2,560-dim)
+- BERT-base-cased (12 layers, 768-dim, 110M parameters) - CLS token embeddings
+- Gemma-2B (google/gemma-2b, 2,048-dim) - mean pooling with attention masking
+- Gemma-7B (google/gemma-7b, 2,560-dim) - mean pooling with attention masking
 
 **Methods:**
-- Two-NN intrinsic dimensionality estimation
-- k-NN graph construction with Louvain community detection
-- HDBSCAN clustering with parameter tuning
-- Relative density calculations (intra-cluster vs overall distances)
+- Embedding normalization: L2 normalization, centering, and re-normalization
+- Two-NN intrinsic dimensionality estimation (Facco et al. 2017)
+- k-NN graph construction (k=15) with Louvain community detection
+- HDBSCAN clustering with automated parameter tuning (min_cluster_size, min_samples)
+- Relative density calculations: intra-cluster vs overall space distances
+- Graph-based metrics: modularity, average clustering coefficient, community cohesiveness
 
 **Key Analyses:**
-- Intrinsic dimensionality comparison across models
-- Community structure and modularity analysis
-- Cluster cohesiveness metrics
-- Investigation of how model size affects embedding space structure
+- Intrinsic dimensionality comparison across model architectures and sizes
+- Community structure analysis: modularity scores and edge density patterns
+- Cluster cohesiveness and relative density metrics
+- Model size effects: larger models show decreased modularity, increased connectivity
+- Embedding space structure: larger models create more structured spaces with distinct clusters
+- Density variance analysis: uniform vs heterogeneous cluster organization
 
 ## Key Findings
 
